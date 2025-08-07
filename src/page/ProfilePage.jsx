@@ -116,7 +116,7 @@ function ProfilePage() {
 
   return (
     <div className="profile-page-container">
-      <ToastContainer />
+
       <div className="com-profile-img-wrap">
         <img src={`https://images.hive.blog/u/${user}/cover`} alt="" />
         <div className="wrap">
