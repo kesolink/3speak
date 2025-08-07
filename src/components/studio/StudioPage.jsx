@@ -10,8 +10,7 @@ import cloud from "../../assets/image/upload-cloud.png"
 import { MdPeopleAlt } from "react-icons/md";
 import DOMPurify from 'dompurify';
 import TextEditor from "./TextEditor"
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {  toast } from 'sonner'
 import { useNavigate } from "react-router-dom";
 import { TailChase } from 'ldrs/react'
 import 'ldrs/react/TailChase.css'

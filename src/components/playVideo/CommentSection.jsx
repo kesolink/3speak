@@ -9,8 +9,9 @@ import { renderPostBody } from '@ecency/render-helper';
 import { Client } from '@hiveio/dhive';
 import UpvoteTooltip from '../tooltip/UpvoteTooltip';
 import CommentVoteTooltip from '../tooltip/CommentVoteTooltip';
-import { toast } from 'react-toastify';
+import {  toast } from 'sonner'
 import axios from 'axios';
+import { estimate, getVotePower } from '../../utils/hiveUtils';
 
 const client = new Client(['https://api.hive.blog']);
 
@@ -24,6 +25,12 @@ function CommentSection({ videoDetails, author, permlink }) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [activeTooltipPermlink, setActiveTooltipPermlink] = useState(null);
   const accessToken = localStorage.getItem("access_token");
+    const [weight, setWeight] = useState(100);
+    const [voteValue, setVoteValue] = useState(0.0);
+      const [accountData, setAccountData] = useState(null);
+
+
+      
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -38,6 +45,35 @@ function CommentSection({ videoDetails, author, permlink }) {
 
     fetchComments();
   }, [author, permlink]);
+
+  useEffect(() => {
+  
+      const fetchAccountData = async () => {
+        try {
+          const result = await getVotePower(user);
+          if (result) {
+            const { account } = result;
+            setAccountData(account);
+            calculateVoteValue(account, weight);
+          }
+        } catch (err) {
+          console.error('Error fetching account:', err);
+        }
+      };
+  
+      fetchAccountData();
+    }, []);
+
+
+    const calculateVoteValue = async (account, percent) => {
+        try{
+          const data = await estimate(account, percent)
+          setVoteValue(data)
+        }catch(err){
+          console.log(err)
+    
+        } 
+      };
 
   const loadNestedComments = async (comments) => {
     const result = await Promise.all(
@@ -222,7 +258,6 @@ try {
   const toggleTooltip = (author, permlink, index) => {
     // console.log('Toggle Tooltip:', author, permlink, index);
     setSelectedPost({ author, permlink });
-    console.log('Selected Post:', selectedPost);
     setShowTooltip(prev => !prev || activeTooltipPermlink !== permlink);
     setActiveTooltipPermlink((prev) => (prev === permlink ? null : permlink));
   };
@@ -275,6 +310,12 @@ try {
           setShowTooltip={setShowTooltip}
           activeTooltipPermlink={activeTooltipPermlink}
           setActiveTooltipPermlink={setActiveTooltipPermlink}
+          weight={weight}
+      setWeight={setWeight}
+      voteValue={voteValue}
+      setVoteValue={setVoteValue}
+      accountData={accountData}
+      setAccountData={setAccountData}
           
         />
       ))}
@@ -301,7 +342,13 @@ function Comment({
   setShowTooltip,
   activeTooltipPermlink,
   setActiveTooltipPermlink,
-  commemtStyle
+  commemtStyle,
+  weight,
+      setWeight,
+      voteValue,
+      setVoteValue,
+      accountData,
+      setAccountData,
 }) {
   const isReplying = activeReply === comment.permlink;
 
@@ -347,6 +394,13 @@ function Comment({
              setCommentList={setCommentList}
              setActiveTooltipPermlink={setActiveTooltipPermlink}
              commemtStyle={commemtStyle}
+             weight={weight}
+             setWeight={setWeight}      
+      voteValue={voteValue}
+      setVoteValue={setVoteValue}
+      accountData={accountData}
+      setAccountData={setAccountData}
+          
             />
           </div>
         </div>
@@ -391,6 +445,12 @@ function Comment({
               setShowTooltip={setShowTooltip}
               activeTooltipPermlink={activeTooltipPermlink}
               setActiveTooltipPermlink={setActiveTooltipPermlink}
+              weight={weight}
+             setWeight={setWeight}      
+      voteValue={voteValue}
+      setVoteValue={setVoteValue}
+      accountData={accountData}
+      setAccountData={setAccountData}
             />
           ))}
         </div>

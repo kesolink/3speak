@@ -3,9 +3,9 @@ import { Client } from '@hiveio/dhive';
 import './UpvoteTooltip.scss';
 import { useAppStore } from '../../lib/store';
 import { IoChevronUpCircleOutline } from 'react-icons/io5';
-import { toast } from 'react-toastify';
+import {  toast } from 'sonner'
 import 'react-toastify/dist/ReactToastify.css';
-import { getUersContent, getVotePower } from '../../utils/hiveUtils';
+import { estimate, getUersContent, getVotePower } from '../../utils/hiveUtils';
 import { TailChase } from 'ldrs/react';
 import 'ldrs/react/TailChase.css';
 import { useNavigate } from 'react-router-dom';
@@ -13,12 +13,12 @@ import axios from 'axios';
 
 const client = new Client(['https://api.hive.blog']);
 
-const CommentVoteTooltip = ({ author, permlink, showTooltip, setShowTooltip, setCommentList, setActiveTooltipPermlink }) => {
+const CommentVoteTooltip = ({ author, permlink, showTooltip, setShowTooltip,weight,setWeight, setCommentList,voteValue,setVoteValue,accountData,setAccountData, setActiveTooltipPermlink }) => {
   const { user, authenticated, LogOut } = useAppStore();
   const [votingPower, setVotingPower] = useState(100);
-  const [weight, setWeight] = useState(100);
-  const [voteValue, setVoteValue] = useState(0.0);
-  const [accountData, setAccountData] = useState(null);
+  // const [weight, setWeight] = useState(100);
+  // const [voteValue, setVoteValue] = useState(0.0);
+  // const [accountData, setAccountData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const tooltipRef = useRef(null);
   const accessToken = localStorage.getItem("access_token");
@@ -68,33 +68,16 @@ const CommentVoteTooltip = ({ author, permlink, showTooltip, setShowTooltip, set
     calculateVoteValue(accountData, weight, vp);
   }, [weight]);
 
-  const calculateVoteValue = async (account, weight, vp) => {
-    try {
-      const rewardFund = await client.database.call('get_reward_fund', ['post']);
-      const feedPrice = await client.database.call('get_current_median_history_price');
-      const props = await client.database.call('get_dynamic_global_properties');
-
-      const vestingShares = parseFloat(account.vesting_shares.replace(' VESTS', ''));
-      const delegated = parseFloat(account.delegated_vesting_shares.replace(' VESTS', ''));
-      const received = parseFloat(account.received_vesting_shares.replace(' VESTS', ''));
-      const effectiveVesting = vestingShares + received - delegated;
-
-      const totalFund = parseFloat(props.total_vesting_fund_hive.replace(' HIVE', ''));
-      const totalShares = parseFloat(props.total_vesting_shares.replace(' VESTS', ''));
-
-      const sp = (effectiveVesting * totalFund) / totalShares;
-      const rshares = (sp * 100 * (vp / 10000) * (weight / 100)) / 50;
-
-      const rewardBalance = parseFloat(rewardFund.reward_balance.replace(' HIVE', ''));
-      const recentClaims = parseFloat(rewardFund.recent_claims);
-      const hivePrice = parseFloat(feedPrice.base) / parseFloat(feedPrice.quote);
-
-      const estimated = (rshares * rewardBalance * hivePrice) / recentClaims;
-      setVoteValue(estimated.toFixed(2));
-    } catch (err) {
-      console.error('Vote value calculation failed:', err);
-    }
-  };
+  const calculateVoteValue = async (account, percent) => {
+      try{
+        const data = await estimate(account, percent)
+        setVoteValue(data)
+      }catch(err){
+        console.log(err)
+  
+      }
+      
+    };
 
 
 const handleVote = async () => {

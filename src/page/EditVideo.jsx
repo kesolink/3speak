@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Edit, Save } from 'lucide-react';
 import "./EditVideo.scss";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {  toast } from 'sonner'
 import { renderPostBody } from "@ecency/render-helper";
 import { convert } from 'html-to-text';
 import axios from 'axios';

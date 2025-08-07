@@ -18,7 +18,8 @@ import LoginNew from "./page/Login/LoginNew";
 import { useAppStore } from "./lib/store";
 import { useEffect } from "react";
 import ProfileNav from "./components/nav/ProfileNav";
-import StudioPage from "./components/studio/StudioPage";
+import StudioPage from "./components/studio2/StudioPage";
+import StudioPage2 from "./components/studio2/StudioPage";
 import CommunitiesRender from "./components/Communities/CommunitiesRender";
 import CommunityPage from "./components/Communities/CommunityPage";
 import TagFeed from "./page/TagFeed";
@@ -34,7 +35,7 @@ import AddAccount_modal from "./components/modal/AddAccount_modal";
 import TestingLogin3 from "./page/Login/TestingLogin3";
 // import TestingLogin from "./page/Login/TestingLogin";
 import AboutPage from "./components/LandingPage/AboutPage";
-
+import { Toaster } from 'sonner'
 
 function App() {
   const { initializeAuth, authenticated } = useAppStore();
@@ -73,6 +74,7 @@ function App() {
         <Sidebar sidebar={sidebar} />
         <div className={`container ${sidebar ? "" : "large-container"}`}>
           <ScrollToTop />
+          <Toaster richColors position="top-right" />
           <Routes>
             <Route path="/" element={<Feed />} />
             <Route path="/watch" element={<Watch />} />
@@ -84,6 +86,7 @@ function App() {
             {/* <Route path="/keychain" element={<KeyChainLogin />} /> */}
             <Route path="/newlogin" element={<LoginNew />} />
             <Route path="/studio" element={<StudioPage />} />
+            <Route path="/studio2" element={<StudioPage2 />} />
             <Route path="/draft" element={<DraftStudio />} />
             <Route path="/editvideo/:d" element={<EditVideo />} />
             <Route path="/communities" element={<CommunitiesRender />} />

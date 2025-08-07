@@ -19,14 +19,13 @@ import BlogContent from "./BlogContent";
 import CommentSection from "./CommentSection";
 import { useAppStore } from '../..//lib/store';
 import { MdPeople } from "react-icons/md";
-import { getUersContent } from "../../utils/hiveUtils";
+import { estimate, getUersContent, getVotePower } from "../../utils/hiveUtils";
 import ToolTip from "../tooltip/ToolTip";
 import { ImSpinner9 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "../Loader/BarLoader";
 import TipModal from "../../components/tip-reward/TipModal"
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {  toast } from 'sonner'
 import { TailChase } from 'ldrs/react'
 import 'ldrs/react/TailChase.css'
 import { getFollowers } from "../../hive-api/api";
@@ -44,6 +43,10 @@ const PlayVideo = ({ videoDetails, author, permlink }) => {
   const [followData, setFollowData] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [optimisticVoteCount, setOptimisticVoteCount] = useState();
+  const [votingPower, setVotingPower] = useState(100);
+  const [accountData, setAccountData] = useState(null);
+  const [voteValue, setVoteValue] = useState(0.0);
+  const [weight, setWeight] = useState(100);
   const navigate = useNavigate();
 
   dayjs.extend(relativeTime);
@@ -98,7 +101,6 @@ const getTooltipVoters = async () => {
           };
         });
 
-      console.log(topVotes);
       setTooltipVoters(topVotes);
     }
   } catch (error) {
@@ -106,6 +108,37 @@ const getTooltipVoters = async () => {
     return [];
   }
 };
+
+const calculateVoteValue = async (account, percent) => {
+        try{
+          const data = await estimate(account, percent)
+          setVoteValue(data)
+        }catch(err){
+          console.log(err)
+        }
+      };
+
+ // Fetch account & VP
+    useEffect(() => {
+      const fetchAccountData = async () => {
+        try {
+          const result = await getVotePower(user);
+          if (result) {
+            const { account } = result;
+            setAccountData(account);
+            calculateVoteValue(account, weight);
+          }
+        } catch (err) {
+          console.error('Error fetching account:', err);
+        }
+      };
+      fetchAccountData();
+    }, [ ]);
+
+  useEffect(() => {
+    if (!accountData) return;
+    calculateVoteValue(accountData, weight);
+  }, [weight, showTooltip ]);
 
 
 
@@ -197,6 +230,9 @@ const getTooltipVoters = async () => {
     return <BarLoader />;
   }
 
+  //Recalculate when weight changes
+ 
+
 
 
   // const handleVote = async (username, permlink, weight = 10000) => {
@@ -287,10 +323,17 @@ const getTooltipVoters = async () => {
 const handleProfileNavigate = (user) => {
       navigate(`/p/${user}`);
      }
-
      const toggleTooltip = () => {
     setShowTooltip((prev)=> !prev)
   };
+
+
+
+
+   
+
+
+    
 
 
 
@@ -375,6 +418,11 @@ const handleProfileNavigate = (user) => {
               permlink={permlink}
               setIsVoted={setIsVoted}
               setOptimisticVoteCount={setOptimisticVoteCount}
+              weight={weight}
+              setWeight={setWeight}
+              voteValue={voteValue}
+              setAccountData={setAccountData}
+              accountData={accountData}
               
               // setVotedPosts={setVotedPosts}
             />

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_STORAGE_ACCESS_TOKEN_KEY, LOCAL_STORAGE_USER_ID_KEY } from '../../hooks/localStorageKeys';
 import { useAppStore } from '../../lib/store';
 import { LuLogOut } from 'react-icons/lu';
-import { toast, ToastContainer } from 'react-toastify';
+import {  toast } from 'sonner'
 import 'react-toastify/dist/ReactToastify.css';
 import { QRCodeSVG } from 'qrcode.react';
 import   {KeyTypes, Providers } from '@aioha/aioha'

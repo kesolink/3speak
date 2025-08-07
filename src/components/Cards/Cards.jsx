@@ -6,10 +6,11 @@ import { FaHeart } from "react-icons/fa";
 import PropTypes from "prop-types";
 import "./Cards.scss";
 import { useAppStore } from "../../lib/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UpvoteTooltip from "../tooltip/UpvoteTooltip";
 import img from "../../assets/image/deleted.jpg";
 import CardVoteTooltip from "../tooltip/CardVoteTooltip";
+import { estimate, getVotePower } from "../../utils/hiveUtils";
 
 dayjs.extend(relativeTime);
 
@@ -22,11 +23,39 @@ function Cards({
 }) {
   const { user, authenticated } = useAppStore();
   const navigate = useNavigate();
+  const [voteValue, setVoteValue] = useState(0.0);
   const [activeTooltipIndex, setActiveTooltipIndex] = useState(null);
   const [selectedPost, setSelectedPost] = useState({
     username: "",
     permlink: "",
   });
+
+  useEffect(()=> {
+    const fetchAccountData = async () => {
+          try {
+            const result = await getVotePower(user);
+            if (result) {
+              const { account } = result;
+              getVotingDefaultValue(account); // use fresh data directly here
+            }
+          } catch (err) {
+            console.error('Error fetching account:', err);
+          }
+        }
+
+        fetchAccountData();
+
+  },[])
+
+
+ const getVotingDefaultValue = async (account)=>{
+  const percent = 100
+  const data = await estimate(account, percent)
+  setVoteValue(data)
+ }
+
+
+
   const [votedPosts, setVotedPosts] = useState([]);
 
   if (loading) return <div>Loading...</div>;
@@ -139,6 +168,8 @@ function Cards({
               author={selectedPost.username}
               permlink={selectedPost.permlink}
               setVotedPosts={setVotedPosts}
+              voteValue={voteValue}
+              setVoteValue={setVoteValue}
 
             />
           </Link>

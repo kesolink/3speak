@@ -41,4 +41,9 @@ export default defineConfig({
       transformMixedEsModules: true, // Helps with CJS/ESM interop
     },
   },
+
+  // ✅ Add this block to enable SCSS source maps
+  css: {
+    devSourcemap: true,
+  },
 });

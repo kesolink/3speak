@@ -5,8 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { initAioha, Asset, KeyTypes, Providers } from '@aioha/aioha'
 import axios from 'axios';
 import { useAppStore } from '../../lib/store';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {  toast } from 'sonner'
 import { LOCAL_STORAGE_ACCESS_TOKEN_KEY, LOCAL_STORAGE_USER_ID_KEY } from '../../hooks/localStorageKeys';
 import { useNavigate } from 'react-router-dom';
 import QrCode_modal from '../modal/QrCode_modal';

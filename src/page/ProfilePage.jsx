@@ -12,17 +12,17 @@ import BarLoader from "../components/Loader/BarLoader";
 import icon from "../../public/images/stack.png";
 import { Leapfrog } from "ldrs/react";
 import "ldrs/react/Leapfrog.css";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {  toast } from 'sonner'
 import { FaVideo } from 'react-icons/fa';
 import Follower from "../components/Userprofilepage/Follower";
 
 function ProfilePage() {
-  const { user, isProcessing, title : processTitle, updateProcessing, authenticated } = useAppStore();
+  const { user, isProcessing, title : processTitle,processUser, updateProcessing, authenticated } = useAppStore();
   const [follower, setFollower] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [show, setShow] = useState("video")
+  const username = localStorage.getItem("user_id");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -159,7 +159,7 @@ function ProfilePage() {
           </div>
         ) : (
           <>
-            {processing && (
+            {processing && user === processUser && (
               <div className="processing-card">
                 <div className="skeleton video-thumbnail-skeleton" />
                 <div className="details">

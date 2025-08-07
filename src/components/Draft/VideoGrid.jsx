@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import VideoCard, { VideoData } from './VideoCard';
 import FilterBar from './FilterBar';
 // import { toast } from 'sonner';
-import { toast, ToastContainer } from 'react-toastify';
+import {  toast } from 'sonner'
 import 'react-toastify/dist/ReactToastify.css';
 import "./VideoGrid.scss"
 

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./CommunitriesTags.scss"
 import { FaVideo } from 'react-icons/fa'
 import { useAppStore } from "../../lib/store";
-import { toast, ToastContainer } from 'react-toastify';
+import {  toast } from 'sonner'
 import 'react-toastify/dist/ReactToastify.css';
 function CommunitiesTags() {
   const { authenticated } = useAppStore();
