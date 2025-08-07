@@ -1,4 +1,4 @@
-import { Client } from '@hiveio/dhive';
+import { Client, SMTAsset } from '@hiveio/dhive';
 
 // Connect to a Hive node
 const client = new Client([
@@ -126,3 +126,136 @@ export async function getFollowing(username, start = '', limit = 100) {
     return [];
   }
 }
+
+
+
+ export const SymbolMap = {
+  HIVE: "HIVE",
+  HBD: "HBD",
+  VESTS: "VESTS",
+  SPK: "SPK"
+};
+
+ export const NaiMap = {
+  "@@000000021": "HIVE",
+  "@@000000013": "HBD",
+  "@@000000037": "VESTS"
+};
+
+ export function parseAsset(sval) {
+  if (typeof sval === "string") {
+    const sp = sval.split(" ");
+    return {
+      amount: parseFloat(sp[0]),
+      symbol: SymbolMap[sp[1]]
+    };
+  } else {
+    return {
+      amount: parseFloat(sval.amount.toString()) / Math.pow(10, sval.precision),
+      symbol: NaiMap[sval.nai]
+    };
+  }
+}
+
+export const getDynamicProps = async () => {
+  try {
+    const rewardFund = await client.database.call('get_reward_fund', ['post']);
+    const globalDynamic = await client.database.call('get_dynamic_global_properties');
+    const feedHistory = await client.database.call('get_feed_history');
+    const chainProps = await client.database.call('get_chain_properties');
+
+    const hivePerMVests =
+      (parseAsset(globalDynamic.total_vesting_fund_hive).amount /
+        parseAsset(globalDynamic.total_vesting_shares).amount) *
+      1e6;
+
+    const base = parseAsset(feedHistory.current_median_history.base).amount;
+    const quote = parseAsset(feedHistory.current_median_history.quote).amount;
+    const fundRecentClaims = parseFloat(rewardFund.recent_claims);
+    const fundRewardBalance = parseAsset(rewardFund.reward_balance).amount;
+    const hbdPrintRate = globalDynamic.hbd_print_rate;
+    const hbdInterestRate = globalDynamic.hbd_interest_rate;
+    const headBlock = globalDynamic.head_block_number;
+    const totalVestingFund = parseAsset(globalDynamic.total_vesting_fund_hive).amount;
+    const totalVestingShares = parseAsset(globalDynamic.total_vesting_shares).amount;
+    const virtualSupply = parseAsset(globalDynamic.virtual_supply).amount;
+    const vestingRewardPercent = globalDynamic.vesting_reward_percent;
+    const accountCreationFee = chainProps.account_creation_fee;
+
+    return {
+      hivePerMVests,
+      base,
+      quote,
+      fundRecentClaims,
+      fundRewardBalance,
+      hbdPrintRate,
+      hbdInterestRate,
+      headBlock,
+      totalVestingFund,
+      totalVestingShares,
+      virtualSupply,
+      vestingRewardPercent,
+      accountCreationFee
+    };
+  } catch (err) {
+    console.error('Vote value calculation failed:', err);
+    return null;
+  }
+};
+
+
+export const votingPower = (account )=> {
+  // @ts-ignore "Account" is compatible with dhive's "ExtendedAccount"
+  const calc = account && client.rc.calculateVPMana(account);
+  const { percentage } = calc;
+
+  return percentage / 100;
+};
+
+ export const estimate = async (account, percent) => {
+    const { fundRecentClaims, fundRewardBalance, base, quote } = await getDynamicProps()
+    const sign = percent < 0 ? -1 : 1;
+    const postRshares =  0;
+
+    const totalVests =
+      parseAsset(account.vesting_shares).amount +
+      parseAsset(account.received_vesting_shares).amount -
+      parseAsset(account.delegated_vesting_shares).amount;
+
+
+    const userVestingShares = totalVests * 1e6;
+
+    const userVotingPower = votingPower(account) * Math.abs(percent);
+    const voteEffectiveShares = userVestingShares * (userVotingPower / 10000) * 0.02;
+
+    // reward curve algorithm (no idea whats going on here)
+    const CURVE_CONSTANT = 2000000000000;
+    const CURVE_CONSTANT_X4 = 4 * CURVE_CONSTANT;
+    const SQUARED_CURVE_CONSTANT = CURVE_CONSTANT * CURVE_CONSTANT;
+
+    const postRsharesNormalized = postRshares + CURVE_CONSTANT;
+    const postRsharesAfterVoteNormalized = postRshares + voteEffectiveShares + CURVE_CONSTANT;
+    const postRsharesCurve =
+      (postRsharesNormalized * postRsharesNormalized - SQUARED_CURVE_CONSTANT) /
+      (postRshares + CURVE_CONSTANT_X4);
+    const postRsharesCurveAfterVote =
+      (postRsharesAfterVoteNormalized * postRsharesAfterVoteNormalized - SQUARED_CURVE_CONSTANT) /
+      (postRshares + voteEffectiveShares + CURVE_CONSTANT_X4);
+
+    const voteClaim = postRsharesCurveAfterVote - postRsharesCurve;
+
+    const proportion = voteClaim / fundRecentClaims;
+    const fullVote = proportion * fundRewardBalance;
+
+    const voteValue = fullVote * (base / quote);
+    // if (sign > 0) {
+    //   return Math.max(voteValue * sign, 0);
+    // }
+
+    const estimated = voteValue * sign;
+    return estimated.toFixed(3);
+  };
+
+
+
+ 

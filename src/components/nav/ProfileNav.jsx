@@ -79,9 +79,9 @@ function ProfileNav({ isVisible, onclose, toggleAddAccount }) {
                 <MdOutlineKeyboardArrowUp />
                 <span>{votingPower}% {" "} VP</span>
               </div>
-              <div class="tooltip">
+              <div className="tooltip">
                 Voting Power
-                <div class="tooltip-arrow"></div>
+                <div className="tooltip-arrow"></div>
               </div>
             </div>
             <div className="wrap-in">
@@ -89,9 +89,9 @@ function ProfileNav({ isVisible, onclose, toggleAddAccount }) {
               <MdKeyboardArrowDown />
               <span>{rc}% {" "} RC</span>
               </div>
-              <div class="tooltip">
+              <div className="tooltip">
                 Resource Credit
-                <div class="tooltip-arrow"></div>
+                <div className="tooltip-arrow"></div>
               </div>
               </div>
 

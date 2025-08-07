@@ -3,8 +3,7 @@ import Success from './Success';
 import './TipModal.scss';
 import { fetchBalances, isAccountValid } from '../../hive-api/api';
 import { useAppStore } from '../../lib/store';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {  toast } from 'sonner'
 import { LineSpinner } from 'ldrs/react'
 import 'ldrs/react/LineSpinner.css'
 

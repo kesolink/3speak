@@ -3,9 +3,9 @@ import { Client } from '@hiveio/dhive';
 import './UpvoteTooltip.scss';
 import { useAppStore } from '../../lib/store';
 import { IoChevronUpCircleOutline } from 'react-icons/io5';
-import { toast } from 'react-toastify';
+import {  toast } from 'sonner'
 import 'react-toastify/dist/ReactToastify.css';
-import { getUersContent, getVotePower } from '../../utils/hiveUtils';
+import { estimate, getUersContent, getVotePower } from '../../utils/hiveUtils';
 import { TailChase } from 'ldrs/react';
 import 'ldrs/react/TailChase.css';
 import axios from 'axios';
@@ -15,12 +15,12 @@ const client = new Client(['https://api.hive.blog']);
 
 
 
-const UpvoteTooltip = ({ author, permlink, showTooltip, setShowTooltip, setIsVoted, setOptimisticVoteCount }) => {
+const UpvoteTooltip = ({ author, permlink, showTooltip, setShowTooltip,voteValue,setVoteValue, setIsVoted,weight, setWeight,accountData, setAccountData, setOptimisticVoteCount }) => {
   const { user, authenticated, clearAccount, LogOut } = useAppStore();
-  const [votingPower, setVotingPower] = useState(100);
-  const [weight, setWeight] = useState(100);
-  const [voteValue, setVoteValue] = useState(0.0);
-  const [accountData, setAccountData] = useState(null);
+  // const [votingPower, setVotingPower] = useState(100);
+  // const [weight, setWeight] = useState(100);
+  // const [voteValue, setVoteValue] = useState(0.0);
+  // const [accountData, setAccountData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const tooltipRef = useRef(null);
   const accessToken = localStorage.getItem("access_token");
@@ -51,10 +51,9 @@ const UpvoteTooltip = ({ author, permlink, showTooltip, setShowTooltip, setIsVot
       try {
         const result = await getVotePower(user);
         if (result) {
-          const { vp, account } = result;
-          setVotingPower((vp / 100).toFixed(2));
+          const { account } = result;
           setAccountData(account);
-          calculateVoteValue(account, weight, vp);
+          calculateVoteValue(account, weight);
         }
       } catch (err) {
         console.error('Error fetching account:', err);
@@ -64,39 +63,20 @@ const UpvoteTooltip = ({ author, permlink, showTooltip, setShowTooltip, setIsVot
     fetchAccountData();
   }, [user, showTooltip]);
 
-  // Recalculate when weight changes
+  //Recalculate when weight changes
   useEffect(() => {
-    if (!accountData || !votingPower) return;
-    const vp = parseFloat(votingPower) * 100;
-    calculateVoteValue(accountData, weight, vp);
+    if (!accountData ) return;
+    calculateVoteValue(accountData, weight);
   }, [weight]);
 
-  const calculateVoteValue = async (account, weight, vp) => {
-    try {
-      const rewardFund = await client.database.call('get_reward_fund', ['post']);
-      const feedPrice = await client.database.call('get_current_median_history_price');
-      const props = await client.database.call('get_dynamic_global_properties');
-
-      const vestingShares = parseFloat(account.vesting_shares.replace(' VESTS', ''));
-      const delegated = parseFloat(account.delegated_vesting_shares.replace(' VESTS', ''));
-      const received = parseFloat(account.received_vesting_shares.replace(' VESTS', ''));
-      const effectiveVesting = vestingShares + received - delegated;
-
-      const totalFund = parseFloat(props.total_vesting_fund_hive.replace(' HIVE', ''));
-      const totalShares = parseFloat(props.total_vesting_shares.replace(' VESTS', ''));
-
-      const sp = (effectiveVesting * totalFund) / totalShares;
-      const rshares = (sp * 100 * (vp / 10000) * (weight / 100)) / 50;
-
-      const rewardBalance = parseFloat(rewardFund.reward_balance.replace(' HIVE', ''));
-      const recentClaims = parseFloat(rewardFund.recent_claims);
-      const hivePrice = parseFloat(feedPrice.base) / parseFloat(feedPrice.quote);
-
-      const estimated = (rshares * rewardBalance * hivePrice) / recentClaims;
-      setVoteValue(estimated.toFixed(2));
-    } catch (err) {
-      console.error('Vote value calculation failed:', err);
+  const calculateVoteValue = async (account, percent) => {
+    try{
+      const data = await estimate(account, percent)
+      setVoteValue(data)
+    }catch(err){
+      console.log(err)
     }
+    
   };
 
   const handleVote = async () => {

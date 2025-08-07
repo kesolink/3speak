@@ -9,7 +9,7 @@ import "./CreateCommunity.scss"
 import { MdOutlineContentCopy } from "react-icons/md";
 import { FaDownload } from "react-icons/fa";
 import gif from "../../../public/images/icons8-success.gif"
-import { toast } from "react-toastify";
+import {  toast } from 'sonner'
 
 const CreateCommunity = ({ isOpen, close}) => {
 

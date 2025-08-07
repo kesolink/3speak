@@ -65,6 +65,8 @@
 
     input[type="range"] {
       width: 100%;
+      z-index: 9999;
+      position: relative;
     }
 
     button {

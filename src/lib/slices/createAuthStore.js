@@ -5,7 +5,7 @@ import {persist} from "zustand/middleware"
 
 import aioha from "../../hive-api/aioha";
 
-import { toast } from "react-toastify";
+import {  toast } from 'sonner'
 
 
 const LOCAL_STORAGE_USER_ID_KEY = "user_id";
