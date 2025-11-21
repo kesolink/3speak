@@ -163,7 +163,7 @@ function Details() {
         </div>
 
         <div className="submit-btn-wrap">
-        <button onClick={()=>{console.log("description===>", description); process() }}>Processed</button>
+        <button onClick={()=>{console.log("description===>", description); process() }}>Proceed</button>
         </div>
 
         </div>
