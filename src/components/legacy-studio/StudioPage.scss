@@ -117,18 +117,22 @@
 
 .video-detail-wrap {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
   padding: 16px;
   border-radius: 9px;
-  background-color: #fff;
+  // background-color: #fff;
   @include mix.respond(phone) {
     flex-direction: column;
   }
   .video-items {
-    width: 50%;
+    background-color: #fff;
+    width: 80%;
+    padding: 30px;
     @include mix.respond(phone) {
       width: 100%;
+      padding: 10px;
     }
     .input-group {
       display: flex;

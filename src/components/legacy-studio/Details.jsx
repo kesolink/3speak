@@ -167,22 +167,14 @@ function Details() {
         </div>
 
         </div>
-        <div className="Preview">
+        {/* <div className="Preview">
         <h3>Preview</h3>
 
-        {/* Show the title */}
+
         <div className="preview-title">
            {title && <span> {title}</span>}
         </div>
-
-        {/* Show the description */}
-        {/* <div className="preview-description">
-          {sanitizedDescription &&  <span dangerouslySetInnerHTML={{ __html: sanitizedDescription }}></span>}
-        </div> */}
-
         <BlogContent description={description} />
-
-        {/* Show the tags */}
         <div className="preview-tags">
         {tagsPreview &&<span> Tags: {tagsPreview.map((item, index) => (
       <span className="item" key={index} style={{ marginRight: '8px' }}>
@@ -193,19 +185,14 @@ function Details() {
 
         
 
-        {/* Show the video preview */}
+       
         {selectedThumbnail && (
               <div className="preview-video">
-                {/* <video
-                  src={URL.createObjectURL(prevVideoFile)}
-                  controls
-                  width="100%"
-                  style={{ marginTop: "1rem", borderRadius: "10px" }}
-                /> */}
+                
                 <VideoPreview file={prevVideoFile} />
                 </div>)}
 
-        {/* Show the thumbnail image */}
+      
         {selectedThumbnail && (
           <div className="preview-thumbnail">
             <img
@@ -217,7 +204,7 @@ function Details() {
         )}
         
 
-        </div>
+        </div> */}
       </div> 
 
       
