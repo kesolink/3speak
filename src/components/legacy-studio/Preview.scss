@@ -99,6 +99,9 @@ $overlay: rgba(15, 23, 42, 0.6);
   .submit-btn-wrap {
     margin-top: 24px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
 
     button {
       background-color: #1c64e0;
@@ -112,6 +115,21 @@ $overlay: rgba(15, 23, 42, 0.6);
       &:disabled {
         background-color: #a1a1aa;
         cursor: not-allowed;
+      }
+    }
+
+    .edit-btn {
+      background-color: transparent;
+      border: 2px solid #1c64e0;
+      color: #1c64e0;
+
+      &:hover:not(:disabled) {
+        background-color: rgba(28, 100, 224, 0.1);
+      }
+
+      &:disabled {
+        border-color: #a1a1aa;
+        color: #a1a1aa;
       }
     }
 

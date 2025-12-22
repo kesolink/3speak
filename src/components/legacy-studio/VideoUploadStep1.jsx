@@ -140,7 +140,12 @@ function VideoUploadStep1() {
         <div className="content">
           <div className="file-upload">
             <div className="content">
-              <div className="icon">
+              <div 
+                className="icon" 
+                onClick={() => videoInputRef.current?.click()}
+                style={{ cursor: 'pointer' }}
+                title="Click to select a video file"
+              >
                 <Upload className="w-8 h-8" />
               </div>
 
