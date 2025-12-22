@@ -57,12 +57,12 @@ function CommentSection({ videoDetails, author, permlink }) {
         const commentsWithChildren = await loadNestedComments(replies);
         setCommentList(commentsWithChildren);
         
-        // Pre-render all comment bodies
-        const renderer = await getRenderer();
+        // Pre-render all comment bodies (createHiveRenderer returns a function directly)
+        const render = await getRenderer();
         const rendered = {};
         const renderComment = (comment) => {
           if (comment?.body) {
-            rendered[comment.permlink] = renderer.render(comment.body);
+            rendered[comment.permlink] = render(comment.body);
           }
           if (comment.children) {
             comment.children.forEach(renderComment);
@@ -404,12 +404,12 @@ function Comment({
     <div className="comment-container" style={{ marginLeft: depth > 0 ? '40px' : '0px' }} >
       <div className="comment">
         <img src={comment?.author?.profile?.images?.avatar || 'https://via.placeholder.com/40'} alt="Author Avatar" />
-        <div>
+        <div className="comment-content">
           <h3>
             {comment?.author?.username}
             <span>{dayjs(comment?.created_at).fromNow()}</span>
           </h3>
-          <p className="markdown-view" dangerouslySetInnerHTML={{ __html: processedBody(comment?.body || '', comment?.permlink) }} />
+          <div className="markdown-view" dangerouslySetInnerHTML={{ __html: processedBody(comment?.body || '', comment?.permlink) }} />
           <div className="comment-action">
             <div className="wrap">
               <BiLike style={{ color: comment.has_voted ? 'red' : '' }}

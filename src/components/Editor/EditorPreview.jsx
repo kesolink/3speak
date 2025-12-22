@@ -32,9 +32,9 @@ const EditorPreview = ({ content }) => {
       return;
     }
     
-    getRenderer().then(renderer => {
+    getRenderer().then(render => {
       try {
-        setRenderedContent(renderer.render(content));
+        setRenderedContent(render(content));
       } catch (error) {
         console.error("Error rendering content:", error);
         setRenderedContent("<p>Error rendering content</p>");

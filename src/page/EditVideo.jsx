@@ -73,8 +73,8 @@ const EditVideo = () => {
   // Render description with the async renderer
   useEffect(() => {
     if (description) {
-      getRenderer().then(renderer => {
-        setRenderedHTML(renderer.render(description));
+      getRenderer().then(render => {
+        setRenderedHTML(render(description));
       }).catch(err => {
         console.error('Error rendering description:', err);
         setRenderedHTML(description);
