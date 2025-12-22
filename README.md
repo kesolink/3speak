@@ -185,7 +185,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Links
 
 - 🌐 [3Speak.tv](https://3speak.tv)
-- 💬 [Discord](https://discord.gg/3speak)
+- 💬 [Discord](https://discord.gg/NSFS2VGj83)
 - 🐦 [Twitter](https://twitter.com/3aboratories)
 - 📝 [Hive Blog](https://peakd.com/@threespeak)
 
@@ -193,4 +193,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <p align="center">
   Built with ❤️ by the 3Speak team and contributors
+<br>
+@kesolink - @menobass - @eddiespino
 </p>
