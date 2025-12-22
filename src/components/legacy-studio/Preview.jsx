@@ -477,6 +477,13 @@ const startEncodingPolling = (vid) => {
 
               <div className="submit-btn-wrap">
                 <button
+                  className="edit-btn"
+                  onClick={() => navigate('/studio/details')}
+                  disabled={isWaitingForUpload}
+                >
+                  Edit Post
+                </button>
+                <button
                   onClick={handlePostVideo}
                   disabled={isWaitingForUpload}
                 >
