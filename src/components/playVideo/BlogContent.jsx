@@ -81,7 +81,7 @@ const BlogContent = ({ author, permlink, description }) => {
 
   async function getPostDescription(author, permlink) {
     const data = await getUersContent(author, permlink);
-    return data.body;
+    return data?.body;
   }
 
   useEffect(() => {

@@ -91,7 +91,12 @@ const handleVote = async () => {
 
   try {
     const data = await getUersContent(author, permlink);
-    const existingVote = data.active_votes.find((vote) => vote.voter === user);
+    if (!data) {
+      toast.error('Could not fetch post data');
+      setIsLoading(false);
+      return;
+    }
+    const existingVote = data.active_votes?.find((vote) => vote.voter === user);
 
     if (existingVote && existingVote.percent === voteWeight) {
       toast.info('Previous value is not acceptable. Vote with a different value.');

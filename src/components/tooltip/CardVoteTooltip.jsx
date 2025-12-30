@@ -84,7 +84,12 @@ const getVotingDefaultValue = async (account, percent)=>{
 
     try {
       const data = await getUersContent(author, permlink);
-      const existingVote = data.active_votes.find((vote) => vote.voter === user);
+      if (!data) {
+        toast.error('Could not fetch post data');
+        setIsLoading(false);
+        return;
+      }
+      const existingVote = data.active_votes?.find((vote) => vote.voter === user);
 
       if (existingVote) {
         if (existingVote.percent === voteWeight) {
