@@ -34,31 +34,43 @@ const BlogContent = ({ author, permlink, description }) => {
     let cleaned = htmlString;
 
     // Remove the 3Speak header block (multiple patterns to catch variations)
-    // Pattern 1: The rendered video embed link with thumbnail
+    // Pattern 1: The rendered video embed (iframe from @snapie/renderer)
+    cleaned = cleaned.replace(
+      /<div[^>]*class="[^"]*video-container[^"]*"[^>]*>[\s\S]*?<iframe[^>]*src="[^"]*3speak\.tv[^"]*"[^>]*>[\s\S]*?<\/iframe>[\s\S]*?<\/div>/gi,
+      ''
+    );
+
+    // Pattern 2: Direct iframe embeds for 3speak
+    cleaned = cleaned.replace(
+      /<iframe[^>]*src="[^"]*3speak\.tv[^"]*"[^>]*>[\s\S]*?<\/iframe>/gi,
+      ''
+    );
+
+    // Pattern 3: The rendered video embed link with thumbnail
     cleaned = cleaned.replace(
       /<p[^>]*>[\s]*<a[^>]*class="[^"]*markdown-video-link[^"]*"[^>]*data-embed-src="https:\/\/3speak\.tv\/embed[^"]*"[^>]*>[\s\S]*?<\/a>[\s]*<\/p>/gi,
       ''
     );
 
-    // Pattern 2: Center block with 3Speak thumbnail/link (markdown converted to HTML)
-    cleaned = cleaned.replace(
-      /<center>[\s\S]*?3speak\.tv[\s\S]*?<\/center>/gi,
-      ''
-    );
-
-    // Pattern 3: "Watch on 3Speak" link with play emoji
+    // Pattern 4: "Watch on 3Speak" link with play emoji (as paragraph)
     cleaned = cleaned.replace(
       /<p[^>]*>[\s]*[▶️]*[\s]*<a[^>]*href="https:\/\/3speak\.tv\/watch[^"]*"[^>]*>[\s]*Watch on 3Speak[\s]*<\/a>[\s]*<\/p>/gi,
       ''
     );
 
-    // Pattern 4: Standalone "Watch on 3Speak" links
+    // Pattern 5: Standalone "Watch on 3Speak" links with emoji
     cleaned = cleaned.replace(
       /▶️[\s]*<a[^>]*href="https:\/\/3speak\.tv\/watch[^"]*"[^>]*>[^<]*<\/a>/gi,
       ''
     );
 
-    // Pattern 5: Remove leading <hr> (---) that separates header from content
+    // Pattern 6: Thumbnail image linking to 3speak watch page
+    cleaned = cleaned.replace(
+      /<a[^>]*href="https:\/\/3speak\.tv\/watch[^"]*"[^>]*>[\s]*<img[^>]*>[\s]*<\/a>/gi,
+      ''
+    );
+
+    // Pattern 7: Remove leading <hr> (---) that separates header from content
     cleaned = cleaned.replace(/^[\s]*<hr[^>]*\/?>/i, '');
     
     // Also remove <hr> right after we stripped the header
@@ -72,6 +84,9 @@ const BlogContent = ({ author, permlink, description }) => {
 
     // Remove any orphaned empty paragraphs
     cleaned = cleaned.replace(/<p[^>]*>[\s]*<\/p>/g, '');
+    
+    // Remove empty center tags
+    cleaned = cleaned.replace(/<center>[\s]*<\/center>/gi, '');
 
     // Trim leading/trailing whitespace
     cleaned = cleaned.trim();
@@ -81,7 +96,7 @@ const BlogContent = ({ author, permlink, description }) => {
 
   async function getPostDescription(author, permlink) {
     const data = await getUersContent(author, permlink);
-    return data.body;
+    return data?.body;
   }
 
   useEffect(() => {
