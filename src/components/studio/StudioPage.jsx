@@ -19,6 +19,7 @@ import Arrow from "./../../../public/images/arrow.png"
 import VideoPreview from "./VideoPreview"
 import Auth_modal from "../modal/Auth_modal";
 import { has3SpeakPostAuth } from "../../utils/hiveUtils";
+import { getSchedulingParams, getMinMaxDates, formatScheduledDateDisplay } from "../../utils/schedulingHelpers";
 
 
 function StudioPage() {
@@ -49,6 +50,8 @@ function StudioPage() {
   const [list, setList] = useState([]);
   const [remaingPercent, setRemaingPercent] = useState (89)
   const [isOpenAuth, setIsOpenAuth] = useState(false)
+  const [isScheduled, setIsScheduled] = useState(false)
+  const [scheduleDateTime, setScheduleDateTime] = useState('')
   
   
   console.log("accesstokrn=====>", accessToken)
@@ -134,7 +137,14 @@ function StudioPage() {
       return;
     }
 
+    // Validate scheduling if enabled
+    if (isScheduled && !scheduleDateTime) {
+      toast.error("Please select a date and time for scheduling!");
+      return;
+    }
+
     const formattedTags = tagsInputValue.trim().split(/\s+/).join(",");
+    const schedulingParams = getSchedulingParams(isScheduled, scheduleDateTime);
 
     const thumbnailIdentifier = thumbnailFile.replace("https://uploads.3speak.tv/files/", "");
     try {
@@ -150,7 +160,8 @@ function StudioPage() {
           thumbnail: thumbnailIdentifier,
           communityID: community.name,
           declineRewards,
-          rewardPowerup
+          rewardPowerup,
+          ...schedulingParams
         }, {
         headers: {
           "Content-Type": "application/json",
@@ -160,7 +171,14 @@ function StudioPage() {
 
       console.log("Details submitted successfully:", response.data);
       updateProcessing(response.data.permlink, response.data.title)
-      toast.success("Video uploaded & Processing");
+      
+      if (schedulingParams.publish_type === 'schedule') {
+        const formattedDate = formatScheduledDateDisplay(scheduleDateTime);
+        toast.success(`Video scheduled for ${formattedDate}`);
+      } else {
+        toast.success("Video uploaded & Processing");
+      }
+      
       navigate("/profile")
     } catch (error) {
       console.error("Failed to submit details:", error);
@@ -250,8 +268,48 @@ function StudioPage() {
           </div>
         </div>
 
+        <div className="scheduling-wrap">
+          <div className="scheduling-header">
+            <label className="schedule-checkbox-label">
+              <input
+                type="checkbox"
+                checked={isScheduled}
+                onChange={(e) => {
+                  setIsScheduled(e.target.checked);
+                  if (!e.target.checked) {
+                    setScheduleDateTime('');
+                  }
+                }}
+              />
+              <span>📅 Schedule for Later</span>
+            </label>
+            <small>Schedule this post to be published at a specific date and time</small>
+          </div>
+
+          {isScheduled && (
+            <div className="schedule-datetime-group">
+              <label htmlFor="schedule-datetime">Publish Date & Time</label>
+              <input
+                type="datetime-local"
+                id="schedule-datetime"
+                value={scheduleDateTime}
+                onChange={(e) => setScheduleDateTime(e.target.value)}
+                min={getMinMaxDates().minFormatted}
+                max={getMinMaxDates().maxFormatted}
+              />
+              <small>Must be at least 1 hour in future, maximum 90 days</small>
+            </div>
+          )}
+        </div>
+
         <div className="submit-btn-wrap">
-        <button onClick={()=>{console.log("description===>", description); handleSubmitDetails()}}>{loading  ? <span className="wrap-loader" >Processing <TailChase size="15" speed="1.75" color="white" /></span> : "Post Video"}</button>
+        <button onClick={()=>{console.log("description===>", description); handleSubmitDetails()}}>
+          {loading ? (
+            <span className="wrap-loader" >Processing <TailChase size="15" speed="1.75" color="white" /></span>
+          ) : (
+            isScheduled ? "Schedule Video" : "Post Video"
+          )}
+        </button>
         </div>
 
         </div>
@@ -276,6 +334,14 @@ function StudioPage() {
       </span>
     ))}</span>}
         </div>
+
+        {/* Show scheduled date if applicable */}
+        {isScheduled && scheduleDateTime && (
+          <div className="preview-scheduled">
+            <span className="schedule-label">📅 Scheduled for:</span>
+            <span className="schedule-date">{formatScheduledDateDisplay(scheduleDateTime)}</span>
+          </div>
+        )}
 
         
 
