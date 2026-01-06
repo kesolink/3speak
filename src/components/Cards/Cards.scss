@@ -89,6 +89,106 @@
           font-size: 11px;
         }
       }
+
+      // Status badges for different video states
+      .status-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        backdrop-filter: blur(8px);
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        z-index: 2;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        &.scheduled {
+          background: linear-gradient(135deg, rgba(255, 193, 7, 0.95), rgba(255, 152, 0, 0.95));
+          box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.6);
+          }
+        }
+
+        &.manual {
+          background: linear-gradient(135deg, rgba(156, 39, 176, 0.95), rgba(123, 31, 162, 0.95));
+          box-shadow: 0 2px 8px rgba(156, 39, 176, 0.4);
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.6);
+          }
+        }
+
+        &.encoding {
+          background: linear-gradient(135deg, rgba(33, 150, 243, 0.95), rgba(3, 169, 244, 0.95));
+          box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.6);
+          }
+
+          .spin-icon {
+            animation: spin 2s linear infinite;
+          }
+        }
+
+        &.draft {
+          background: linear-gradient(135deg, rgba(158, 158, 158, 0.95), rgba(117, 117, 117, 0.95));
+          box-shadow: 0 2px 8px rgba(117, 117, 117, 0.4);
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(117, 117, 117, 0.6);
+          }
+        }
+
+        &.deleted {
+          background: linear-gradient(135deg, rgba(244, 67, 54, 0.95), rgba(211, 47, 47, 0.95));
+          box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.6);
+          }
+        }
+
+        &.failed {
+          background: linear-gradient(135deg, rgba(255, 87, 34, 0.95), rgba(230, 74, 25, 0.95));
+          box-shadow: 0 2px 8px rgba(255, 87, 34, 0.4);
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.6);
+          }
+        }
+
+        @include respond(phone) {
+          padding: 5px 8px;
+          font-size: 11px;
+          gap: 4px;
+
+          span {
+            display: none; // Hide text on mobile, show only icon
+          }
+        }
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
     }
     h2{
       padding: 0px 4px;

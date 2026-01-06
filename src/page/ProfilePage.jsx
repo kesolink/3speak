@@ -133,29 +133,43 @@ function ProfilePage() {
      VIDEO FEED (INFINITE SCROLL)
   =============================== */
   const fetchVideos = async ({ pageParam = 0 }) => {
-    const accessToken = localStorage.getItem("access_token");
-    
-    // Use studio API to get ALL videos including scheduled ones
-    const res = await axios.get('https://studio.3speak.tv/mobile/api/my-videos', {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      },
-      withCredentials: true
-    });
+    if (!user) {
+      console.error('No user found');
+      return [];
+    }
 
-    // Filter to show only published OR scheduled videos
-    const allVideos = res.data || [];
-    const filteredVideos = allVideos.filter(video => 
-      video.status === 'published' || video.status === 'scheduled'
-    );
-
-    // Handle pagination client-side since API returns all videos
     const pageSize = 20;
-    const start = pageParam * pageSize;
-    const end = start + pageSize;
-    
-    return filteredVideos.slice(start, end);
+
+    try {
+      // Use new reliable API endpoint with server-side pagination
+      const res = await axios.get('https://views.3speak.tv/api/my-videos', {
+        params: {
+          username: user,
+          limit: pageSize,
+          offset: pageParam * pageSize,
+          status: 'all', // Get published and scheduled videos
+          sort: 'newest' // Sort by newest first
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const responseData = res.data?.data || {};
+      const allVideos = responseData.videos || [];
+      
+      // Filter out "uploaded" status videos (incomplete uploads)
+      const filteredVideos = allVideos.filter(video => video.status !== 'uploaded');
+      
+      // Attach original count for pagination logic
+      filteredVideos._originalCount = allVideos.length;
+      
+      return filteredVideos;
+    } catch (error) {
+      console.error('Failed to fetch videos:', error.response?.status, error.response?.data);
+      toast.error('Failed to load videos');
+      return [];
+    }
   };
 
   const {
@@ -168,8 +182,13 @@ function ProfilePage() {
   } = useInfiniteQuery({
     queryKey: ["ProfilePage", user],
     queryFn: fetchVideos,
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.length > 0 ? allPages.flat().length : undefined,
+    getNextPageParam: (lastPage, allPages) => {
+      // Check original count before filtering to determine if more pages exist
+      const originalCount = lastPage?._originalCount || lastPage?.length || 0;
+      if (!lastPage || originalCount < 20) return undefined;
+      // Return the next page number
+      return allPages.length;
+    },
   });
 
   const videos = data?.pages.flat() || [];
