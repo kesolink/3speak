@@ -1,6 +1,8 @@
 import { IoChevronUpCircleOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { IoCalendarOutline } from "react-icons/io5";
+import { MdDelete, MdError, MdPhoneIphone } from "react-icons/md";
+import { FaCog, FaFileAlt } from "react-icons/fa";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Link, useNavigate } from "react-router-dom";
@@ -116,10 +118,47 @@ function Card3({ videos = [], loading = false, error = null }) {
                     .padStart(2, "0")}
                 </span>
               </div>
-              {/* Scheduled Post Badge - only show while status is 'scheduled' */}
-              {video.publish_type === 'schedule' && video.status === 'scheduled' && (
-                <div className="scheduled-badge" title={`Scheduled for ${dayjs(video.publish_data?.scheduled_at).format('MMM D, YYYY h:mm A')}`}>
+
+              {/* Status Badges */}
+              {video.status === 'scheduled' && video.publish_type === 'schedule' && (
+                <div className="status-badge scheduled" title={`Scheduled for ${dayjs(video.publish_data?.scheduled_at).format('MMM D, YYYY h:mm A')}`}>
                   <IoCalendarOutline size={18} />
+                  <span>Scheduled</span>
+                </div>
+              )}
+
+              {video.publish_type === 'publish_manual' && (
+                <div className="status-badge manual" title="Uploaded via mobile app">
+                  <MdPhoneIphone size={18} />
+                  <span>Mobile</span>
+                </div>
+              )}
+
+              {video.status === 'encoding' && (
+                <div className="status-badge encoding" title="Video is being processed">
+                  <FaCog size={16} className="spin-icon" />
+                  <span>Processing</span>
+                </div>
+              )}
+
+              {video.status === 'draft' && (
+                <div className="status-badge draft" title="Draft - not published yet">
+                  <FaFileAlt size={16} />
+                  <span>Draft</span>
+                </div>
+              )}
+
+              {video.status === 'deleted' && (
+                <div className="status-badge deleted" title="This video has been deleted">
+                  <MdDelete size={18} />
+                  <span>Deleted</span>
+                </div>
+              )}
+
+              {video.status === 'failed' && (
+                <div className="status-badge failed" title="Video processing failed">
+                  <MdError size={18} />
+                  <span>Failed</span>
                 </div>
               )}
             </div>
