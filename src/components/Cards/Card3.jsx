@@ -198,7 +198,11 @@ function Card3({ videos = [], loading = false, error = null }) {
 
             {/* Author */}
             <div className="profile-view-wrap">
-              <div className="profile-wrapper">
+              <Link
+                to={`/p/${video.author?.username || video.author || video.owner}`}
+                className="profile-wrapper"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <img
                   className="profile-img"
                   src={`https://images.hive.blog/u/${
@@ -206,27 +210,10 @@ function Card3({ videos = [], loading = false, error = null }) {
                   }/avatar`}
                   alt=""
                 />
-                {/* <h2
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleProfileNavigation(video.author?.username || video.author || video.owner);
-                  }}
-                >
-                  {video.author?.username || video.author || video.owner}
-                </h2> */}
-
-                <h2
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setModalUser(video.author?.username || video.author || video.owner);
-                  }}
-                >
+                <h2>
                   {video.author?.username || video.author || video.owner}
                 </h2>
-
-              </div>
+              </Link>
               {getViewCount(video.author?.username || video.author || video.owner, video.permlink) !== null && (
                 <div className="view-count">
                   <IoEyeOutline size={14} />

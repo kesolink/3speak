@@ -1,0 +1,29 @@
+.author-profile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.7;
+
+    .author-name {
+      text-decoration: underline;
+    }
+  }
+
+  .author-avatar {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-size: 12.95px;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+}
