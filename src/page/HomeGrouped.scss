@@ -1,0 +1,270 @@
+@use "../mixins.scss" as *;
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #f0f0f0 4%, #e0e0e0 25%, #f0f0f0 36%);
+  background-size: 1000px 100%;
+  border-radius: 4px;
+}
+
+.home-grouped-container {
+  padding: 20px 0;
+  max-width: 100%;
+
+  @include respond(phone) {
+    padding: 15px 0;
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+    font-size: 16px;
+  }
+}
+
+.video-row {
+  margin-bottom: 25px;
+
+  @include respond(phone) {
+    margin-bottom: 15px;
+  }
+
+  .row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    padding: 0 10px;
+
+    @include respond(phone) {
+      margin-bottom: 4px;
+      padding: 0 6px;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+
+      @include respond(phone) {
+        font-size: 13px;
+      }
+    }
+
+    .view-all {
+      font-size: 12px;
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      @include respond(phone) {
+        font-size: 11px;
+      }
+    }
+  }
+
+  .scroll-wrapper {
+    position: relative;
+
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      color: var(--text-primary);
+
+      &:hover {
+        background: var(--accent-primary);
+        color: white;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      &.left {
+        left: -20px;
+      }
+
+      &.right {
+        right: -20px;
+      }
+
+      @include respond(phone) {
+        width: 32px;
+        height: 32px;
+
+        &.left {
+          left: 5px;
+        }
+
+        &.right {
+          right: 5px;
+        }
+      }
+
+      svg {
+        font-size: 18px;
+
+        @include respond(phone) {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .video-scroll-container-horizontal {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 6px 10px;
+    margin: 0 -10px;
+
+    // Hide scrollbar but keep functionality
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE/Edge
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome/Safari
+    }
+
+    @include respond(phone) {
+      padding: 4px 8px;
+    }
+
+    .card-container-horizontal {
+      // Override the grid layout from Card3's Cards.scss
+      .card-container {
+        display: grid !important;
+        grid-template-columns: none !important;
+        grid-template-rows: repeat(2, 1fr) !important;
+        grid-auto-flow: column !important;
+        gap: 20px !important;
+        grid-column-gap: 20px !important;
+        grid-row-gap: 20px !important;
+        margin-top: 0 !important;
+
+        .card {
+          width: 280px;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+          }
+
+          @include respond(phone) {
+            width: 160px;
+
+            // Force 16:9 aspect ratio on thumbnail
+            .img-wrap img {
+              height: 90px; // 160px * 9/16 = 90px
+            }
+
+            // Smaller fonts for mobile cards
+            h2 {
+              font-size: 10px;
+              margin: 3px 0;
+              -webkit-line-clamp: 2;
+            }
+
+            .profile-view-wrap {
+              .profile-wrapper {
+                .profile-img {
+                  width: 18px;
+                  height: 18px;
+                }
+                h2 {
+                  font-size: 9px;
+                }
+              }
+              .view-count {
+                font-size: 9px;
+                span {
+                  font-size: 9px;
+                }
+              }
+            }
+
+            .bottom-action {
+              padding: 4px 3px;
+
+              p {
+                font-size: 9px;
+              }
+
+              .wrap-left {
+                gap: 8px;
+                font-size: 9px;
+
+                .flex-div {
+                  span {
+                    font-size: 9px;
+                  }
+                  .icon {
+                    font-size: 14px;
+                  }
+                  .icon-heart {
+                    font-size: 11px;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .skeleton-horizontal-container {
+      display: grid;
+      grid-template-rows: repeat(2, 1fr);
+      grid-auto-flow: column;
+      gap: 20px;
+
+      .skeleton-card-horizontal {
+        width: 280px;
+
+        @include respond(phone) {
+          width: 160px;
+        }
+
+        .video-thumbnail-skeleton {
+          width: 100%;
+          height: 160px;
+          margin-bottom: 10px;
+          border-radius: 8px;
+
+          @include respond(phone) {
+            height: 90px; // 16:9 ratio for 160px width
+          }
+        }
+
+        .line-skeleton {
+          height: 12px;
+          margin-bottom: 6px;
+          border-radius: 6px;
+        }
+      }
+    }
+  }
+
+}

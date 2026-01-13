@@ -10,6 +10,7 @@ import Feed from "./components/Feed/Feed";
 import FirstUploads from "./page/FirstUploads";
 import Trend from "./page/Trend";
 import NewVideos from "./page/NewVideos";
+import HomeGrouped from "./page/HomeGrouped";
 import UploadVideo from "./page/UploadVideo";
 import Login from "./page/Login/Login";
 // import KeyChainLogin from './page/Login/KeyChainLogin'
@@ -54,7 +55,7 @@ import { LegacyUploadProvider } from "./context/LegacyUploadContext";
 
 function App() {
   const { initializeAuth, authenticated, LogOut } = useAppStore();
-  const [sidebar, setSideBar] = useState(true);
+  const [sidebar, setSideBar] = useState(false);
   const [profileNavVisible, setProfileNavVisible] = useState(false);
 
   const [globalCloseRender, setGlobalCloseRender] = useState(false)
@@ -123,7 +124,8 @@ function App() {
           <ScrollToTop />
           {/* <Toaster richColors position="top-right" /> */}
           <Routes>
-            <Route path="/" element={<Feed />} />
+            <Route path="/" element={<HomeGrouped />} />
+            <Route path="/home-feed" element={<Feed />} />
             <Route path="/watch" element={<Watch />} />
             <Route path="/upload" element={<UploadVideo />} />
             <Route path="/firstupload" element={<FirstUploads />} />
