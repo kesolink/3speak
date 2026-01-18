@@ -461,7 +461,7 @@ const handleProfileNavigate = (user) => {
               <span>${videoDetails?.stats?.total_hive_reward?.toFixed(2) ?? '0.00'}</span>
             </span>
             {/* <span>Reply</span> */}
-            {authenticated && hasKeychain && (
+            {authenticated  && (
               <button className="tip-btn" onClick={() => setIsTipModalOpen(true)}>Tip</button>
             )}
             <UpvoteTooltip
